@@ -1,3 +1,5 @@
+Fork from Neargye/magic_enum; trying to use C++20 source location and to become compiler independent.
+
 ```text
  __  __             _        ______                          _____
 |  \/  |           (_)      |  ____|                        / ____|_     _
