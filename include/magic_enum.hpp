@@ -55,6 +55,19 @@
 #include <string_view>
 #endif
 
+#ifdef __has_include
+#  if __has_include(<version>)
+#    include <version>
+#  endif
+#endif
+
+#if __cpp_lib_source_location >= 201907L
+#  include <source_location>
+#  define MAGIC_ENUM_USING_SOURCE_LOCATION 1
+#else
+#  define MAGIC_ENUM_USING_SOURCE_LOCATION 0
+#endif
+
 #if defined(__clang__)
 #  pragma clang diagnostic push
 #elif defined(__GNUC__)
