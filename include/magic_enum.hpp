@@ -366,7 +366,7 @@ struct EnumNameHelper {
   static_assert(is_enum_v<E>, "magic_enum::detail::EnumNameHelper requires enum type.");
 
   template <E val>
-  constexpr auto get_value_name() {
+  static constexpr auto get_value_name() {
     auto base = get_type_name<EnumValueWrapper<val>>();
     return remove_wrapping_template(base, EnumValueWrapperName, '<', '>');
   }
