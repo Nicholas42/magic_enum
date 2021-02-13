@@ -409,7 +409,7 @@ constexpr auto n() noexcept {
     static_cast<void>(custom_name);
 #if defined(MAGIC_ENUM_SUPPORTED) && MAGIC_ENUM_SUPPORTED
 #  if MAGIC_ENUM_USING_SOURCE_LOCATION
-    constexpr auto name = EnumNameHelper<E>::get_value_name<V>();
+    constexpr auto name = EnumNameHelper<E>::template get_value_name<V>();
 #  else
     MAGIC_ENUM_LEGACY_BRANCH
 #    if defined(__clang__) || defined(__GNUC__)
