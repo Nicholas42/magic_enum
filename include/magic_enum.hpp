@@ -314,6 +314,58 @@ constexpr bool is_pow2(I x) noexcept {
 template <typename T>
 inline constexpr bool is_enum_v = std::is_enum_v<T> && std::is_same_v<T, std::decay_t<T>>;
 
+#if MAGIC_ENUM_USING_SOURCE_LOCATION
+constexpr auto remove_wrapping_template(string_view content, string_view anchor, char left, char right) {
+  auto start = content.find(anchor) + anchor.length();
+  auto substr = content.substr(start);
+  assert(!substr.empty() && "No anchor in given content.");
+  assert(substr[0] == left && "Anchor is not followed by left delimiter.");
+
+  for (auto pos = 0ul, balance = 0ul; pos < substr.length(); ++pos) {
+    auto c = substr[pos];
+    if (c == left) {
+      ++balance;
+    } else if (c == right && --balance == 0) {
+      return content.substr(1, pos - 1);
+    }
+  }
+  assert(false && "Delimiters are not balanced");
+}
+
+template <class T>
+struct TemplateWrap {
+  using type = T;
+};
+static constexpr string_view TemplateWrapName = "TemplateWrap";
+
+template <class T>
+constexpr auto get_type_name_wrapped() {
+  auto source_loc = std::source_location::current();
+  return remove_wrapping_template(source_loc.function_name, TemplateWrapName, '<', '>');
+}
+template <class T>
+constexpr auto get_type_name() {
+  return get_type_name_wrapped<TemplateWrap<T>>();
+}
+
+static constexpr sstristring_view EnumValueWrapperName = "EnumValueWrapper";
+
+template <class E>
+struct EnumNameHelper {
+  template <E val>
+  struct EnumValueWrapper {};
+  static_assert(is_enum_v<E>, "magic_enum::detail::EnumNameHelper requires enum type.");
+
+  template <E val>
+  constexpr auto get_value_name() {
+    auto base = get_type<EnumValueWrapper<val>>();
+    return remove_wrapping_template(base, EnumValueWrapperName, '<', '>');
+  }
+
+  static constexpr auto enum_name = get_type_name<E>();
+};
+#endif
+
 template <typename E>
 constexpr auto n() noexcept {
   static_assert(is_enum_v<E>, "magic_enum::detail::n requires enum type.");
