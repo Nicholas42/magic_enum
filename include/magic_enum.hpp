@@ -350,14 +350,14 @@ static constexpr string_view TemplateWrapName = "TemplateWrap";
 template <class T>
 constexpr auto get_type_name_wrapped() {
   auto source_loc = std::source_location::current();
-  return remove_wrapping_template(source_loc.function_name, TemplateWrapName, '<', '>');
+  return remove_wrapping_template(source_loc.function_name(), TemplateWrapName, '<', '>');
 }
 template <class T>
 constexpr auto get_type_name() {
   return get_type_name_wrapped<TemplateWrap<T>>();
 }
 
-static constexpr sstristring_view EnumValueWrapperName = "EnumValueWrapper";
+static constexpr string_view EnumValueWrapperName = "EnumValueWrapper";
 
 template <class E>
 struct EnumNameHelper {
@@ -367,7 +367,7 @@ struct EnumNameHelper {
 
   template <E val>
   constexpr auto get_value_name() {
-    auto base = get_type<EnumValueWrapper<val>>();
+    auto base = get_type_name<EnumValueWrapper<val>>();
     return remove_wrapping_template(base, EnumValueWrapperName, '<', '>');
   }
 
