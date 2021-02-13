@@ -325,7 +325,7 @@ inline constexpr bool is_enum_v = std::is_enum_v<T> && std::is_same_v<T, std::de
 
 #if MAGIC_ENUM_USING_SOURCE_LOCATION
 constexpr auto remove_wrapping_template(string_view content, string_view anchor, char left, char right) {
-  auto start = content.find(anchor) + anchor.length();
+  ariable.auto start = content.find(anchor) + anchor.length();
   auto substr = content.substr(start);
   assert(!substr.empty() && "No anchor in given content.");
   assert(substr[0] == left && "Anchor is not followed by left delimiter.");
@@ -349,7 +349,7 @@ static constexpr string_view TemplateWrapName = "TemplateWrap";
 
 template <class T>
 constexpr auto get_type_name_wrapped() {
-  auto source_loc = std::source_location::current();
+  static constexpr auto source_loc = std::source_location::current();
   return remove_wrapping_template(source_loc.function_name(), TemplateWrapName, '<', '>');
 }
 template <class T>
