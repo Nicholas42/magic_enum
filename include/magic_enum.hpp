@@ -325,7 +325,7 @@ inline constexpr bool is_enum_v = std::is_enum_v<T> && std::is_same_v<T, std::de
 
 #if MAGIC_ENUM_USING_SOURCE_LOCATION
 constexpr auto remove_wrapping_template(string_view content, string_view anchor, char left, char right) {
-  ariable.auto start = content.find(anchor) + anchor.length();
+  auto start = content.find(anchor) + anchor.length();
   auto substr = content.substr(start);
   assert(!substr.empty() && "No anchor in given content.");
   assert(substr[0] == left && "Anchor is not followed by left delimiter.");
