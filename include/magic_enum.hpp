@@ -370,7 +370,9 @@ template <typename E>
 constexpr auto n() noexcept {
   static_assert(is_enum_v<E>, "magic_enum::detail::n requires enum type.");
 #if defined(MAGIC_ENUM_SUPPORTED) && MAGIC_ENUM_SUPPORTED
-#  if defined(__clang__)
+#  if MAGIC_ENUM_USING_SOURCE_LOCATION
+  constexpr string_view name{EnumNameHelper<E>::enum_name};
+#  elif defined(__clang__)
   constexpr string_view name{__PRETTY_FUNCTION__ + 34, sizeof(__PRETTY_FUNCTION__) - 36};
 #  elif defined(__GNUC__)
   constexpr string_view name{__PRETTY_FUNCTION__ + 49, sizeof(__PRETTY_FUNCTION__) - 51};
@@ -394,7 +396,9 @@ constexpr auto n() noexcept {
   if constexpr (custom_name.empty()) {
     static_cast<void>(custom_name);
 #if defined(MAGIC_ENUM_SUPPORTED) && MAGIC_ENUM_SUPPORTED
-#  if defined(__clang__) || defined(__GNUC__)
+#  if MAGIC_ENUM_USING_SOURCE_LOCATION
+    constexpr auto name = EnumNameHelper<E>::get_value_name<V>();
+#  elif defined(__clang__) || defined(__GNUC__)
     constexpr auto name = pretty_name({__PRETTY_FUNCTION__, sizeof(__PRETTY_FUNCTION__) - 2});
 #  elif defined(_MSC_VER)
     constexpr auto name = pretty_name({__FUNCSIG__, sizeof(__FUNCSIG__) - 17});
