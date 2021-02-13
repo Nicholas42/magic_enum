@@ -335,7 +335,7 @@ constexpr auto remove_wrapping_template(string_view content, string_view anchor,
     if (c == left) {
       ++balance;
     } else if (c == right && --balance == 0) {
-      return content.substr(1, pos - 1);
+      return substr.substr(1, pos - 1);
     }
   }
   assert(false && "Delimiters are not balanced");
