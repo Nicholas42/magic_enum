@@ -81,9 +81,18 @@
 #endif
 
 // Checks magic_enum compiler compatibility.
-#if defined(__clang__) && __clang_major__ >= 5 || defined(__GNUC__) && __GNUC__ >= 9 || defined(_MSC_VER) && _MSC_VER >= 1910 || MAGIC_ENUM_USING_SOURCE_LOCATION
-#  undef  MAGIC_ENUM_SUPPORTED
-#  define MAGIC_ENUM_SUPPORTED 1
+#if defined(MAGIC_ENUM_DISABLE_LEGACY) && MAGIC_ENUM_DISABLE_LEGACY
+#  define MAGIC_ENUM_LEGACY_BRANCH static_assert(false, "Using legacy version of magic_enum");
+#  if MAGIC_ENUM_USING_SOURCE_LOCATION
+#    undef  MAGIC_ENUM_SUPPORTED
+#    define MAGIC_ENUM_SUPPORTED 1
+#  endif
+#else
+#  define MAGIC_ENUM_LEGACY_BRANCH ;
+#  if defined(__clang__) && __clang_major__ >= 5 || defined(__GNUC__) && __GNUC__ >= 9 || defined(_MSC_VER) && _MSC_VER >= 1910 || MAGIC_ENUM_USING_SOURCE_LOCATION
+#    undef  MAGIC_ENUM_SUPPORTED
+#    define MAGIC_ENUM_SUPPORTED 1
+#  endif
 #endif
 
 // Checks magic_enum compiler aliases compatibility.
@@ -372,12 +381,15 @@ constexpr auto n() noexcept {
 #if defined(MAGIC_ENUM_SUPPORTED) && MAGIC_ENUM_SUPPORTED
 #  if MAGIC_ENUM_USING_SOURCE_LOCATION
   constexpr string_view name{EnumNameHelper<E>::enum_name};
-#  elif defined(__clang__)
+#  else
+  MAGIC_ENUM_LEGACY_BRANCH
+#      if defined(__clang__)
   constexpr string_view name{__PRETTY_FUNCTION__ + 34, sizeof(__PRETTY_FUNCTION__) - 36};
-#  elif defined(__GNUC__)
+#      elif defined(__GNUC__)
   constexpr string_view name{__PRETTY_FUNCTION__ + 49, sizeof(__PRETTY_FUNCTION__) - 51};
-#  elif defined(_MSC_VER)
+#      elif defined(_MSC_VER)
   constexpr string_view name{__FUNCSIG__ + 40, sizeof(__FUNCSIG__) - 57};
+#      endif
 #  endif
   return static_string<name.size()>{name};
 #else
@@ -398,12 +410,15 @@ constexpr auto n() noexcept {
 #if defined(MAGIC_ENUM_SUPPORTED) && MAGIC_ENUM_SUPPORTED
 #  if MAGIC_ENUM_USING_SOURCE_LOCATION
     constexpr auto name = EnumNameHelper<E>::get_value_name<V>();
-#  elif defined(__clang__) || defined(__GNUC__)
+#  else
+    MAGIC_ENUM_LEGACY_BRANCH
+#    if defined(__clang__) || defined(__GNUC__)
     constexpr auto name = pretty_name({__PRETTY_FUNCTION__, sizeof(__PRETTY_FUNCTION__) - 2});
-#  elif defined(_MSC_VER)
+#    elif defined(_MSC_VER)
     constexpr auto name = pretty_name({__FUNCSIG__, sizeof(__FUNCSIG__) - 17});
-#  endif
+#    endif
     return static_string<name.size()>{name};
+#  endif
 #else
     return string_view{}; // Unsupported compiler.
 #endif
