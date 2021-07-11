@@ -349,8 +349,7 @@ static constexpr string_view TemplateWrapName = "TemplateWrap";
 
 template <class T>
 constexpr auto get_type_name_wrapped() {
-  constexpr auto source_loc = std::source_location::current();
-  return remove_wrapping_template(source_loc.function_name(), TemplateWrapName, '<', '>');
+  return remove_wrapping_template(std::source_location::current().function_name(), TemplateWrapName, '<', '>');
 }
 template <class T>
 constexpr auto get_type_name() {
